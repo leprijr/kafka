@@ -50,8 +50,10 @@ th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line
 .cal .day.other { opacity: .45; }
 .cal .day.sel { outline: 2px solid var(--primary); }
 .cal .ev { font-size: 11px; background: #eef2ff; border-radius: 6px; padding: 1px 5px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #312e81, #4f46e5); padding: 16px; }
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 16px; }
 .login-box { background: #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 380px; }
+.login-box button { background: var(--bg); }
+.login-box button:hover { background: #1e293b; }
 .login-box h1 { margin: 0 0 4px; }
 .pw-wrap { position: relative; }
 .pw-wrap input { padding-right: 42px; }
