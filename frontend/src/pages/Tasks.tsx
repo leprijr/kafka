@@ -20,6 +20,9 @@ interface Task {
 
 const emptyForm = { titulo: '', descricao: '', status: 'PENDENTE', prioridade: 'MEDIA', data_inicio: '', data_prazo: '', area_id: '', origem_ids: [] as number[], user_id: '' };
 
+const STATUS_LABEL: Record<string, string> = { PENDENTE: 'Não iniciado', EM_ANDAMENTO: 'Em andamento', CONCLUIDA: 'Concluída' };
+const statusLabel = (s: string) => STATUS_LABEL[s] || s;
+
 export default function Tasks() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -149,7 +152,7 @@ export default function Tasks() {
           <input placeholder="Buscar…" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} style={{ maxWidth: 200 }} />
           <select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })} style={{ maxWidth: 170 }}>
             <option value="">Todos os status</option>
-            <option value="PENDENTE">Pendente</option>
+            <option value="PENDENTE">Não iniciado</option>
             <option value="EM_ANDAMENTO">Em andamento</option>
             <option value="CONCLUIDA">Concluída</option>
           </select>
@@ -181,7 +184,7 @@ export default function Tasks() {
                   {t.area_nome && <span className="badge dim">{t.area_nome}</span>}{' '}
                   {t.origens.map(o => <span key={o.id} className="badge" style={{ marginRight: 4 }}>{o.nome}</span>)}
                 </td>
-                <td><span className={`badge ${t.status === 'CONCLUIDA' ? 'ok' : t.status === 'EM_ANDAMENTO' ? 'warn' : ''}`}>{t.status}</span></td>
+                <td><span className={`badge ${t.status === 'CONCLUIDA' ? 'ok' : t.status === 'EM_ANDAMENTO' ? 'warn' : ''}`}>{statusLabel(t.status)}</span></td>
                 <td>{t.data_prazo || '—'}</td>
                 <td>{t.owner_name}</td>
                 <td className="row">
@@ -206,7 +209,7 @@ export default function Tasks() {
             <div className="row">
               <div style={{ flex: 1 }}><label>Status</label>
                 <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
-                  <option value="PENDENTE">Pendente</option>
+                  <option value="PENDENTE">Não iniciado</option>
                   <option value="EM_ANDAMENTO">Em andamento</option>
                   <option value="CONCLUIDA">Concluída</option>
                 </select></div>
@@ -259,7 +262,7 @@ export default function Tasks() {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h3>#{detail.id} — {detail.titulo}</h3>
             <p>{detail.descricao || <i>Sem descrição</i>}</p>
-            <p><span className="badge">{detail.status}</span> <span className="badge dim">{detail.prioridade}</span> Prazo: {detail.data_prazo || '—'}</p>
+            <p><span className="badge">{statusLabel(detail.status)}</span> <span className="badge dim">{detail.prioridade}</span> Prazo: {detail.data_prazo || '—'}</p>
             <h4>Tramitações</h4>
             <div className="timeline">
               {trams.map(tr => <div key={tr.id} className="item"><b>{tr.author_name}</b> <small>· {tr.created_at}</small><br />{tr.texto}</div>)}

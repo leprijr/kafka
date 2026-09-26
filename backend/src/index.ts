@@ -396,7 +396,8 @@ app.get('/api/tasks/resumo', authenticate, (req: AuthRequest, res) => {
   lines.push(`RESUMO DE TAREFAS — ${new Date().toLocaleDateString('pt-BR')} (${rows.length} tarefas)`);
   for (const s of ['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA']) {
     const g = rows.filter(r => r.status === s);
-    lines.push(`\n== ${s.replace('_', ' ')} (${g.length}) ==`);
+    const label = s === 'PENDENTE' ? 'NÃO INICIADO' : s === 'EM_ANDAMENTO' ? 'EM ANDAMENTO' : 'CONCLUIDA';
+    lines.push(`\n== ${label} (${g.length}) ==`);
     for (const t of g) {
       const orgs = (db.prepare(`SELECT o.nome FROM task_origens to2 JOIN origens o ON o.id = to2.origem_id WHERE to2.task_id = ?`).all(t.id) as any[]).map(o => o.nome).join(', ');
       lines.push(`• [${t.id}] ${t.titulo} | Área: ${t.area_nome}${orgs ? ` | Origens: ${orgs}` : ''} | Prazo: ${t.data_prazo || '—'} | Resp: ${t.owner_name} | Prioridade: ${t.prioridade}`);

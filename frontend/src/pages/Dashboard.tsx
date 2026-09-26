@@ -57,7 +57,7 @@ export default function Dashboard() {
         <>
           <div className="grid">
             <div className="stat"><b>{sum.total}</b><span>Total</span></div>
-            <div className="stat"><b>{sum.pendentes}</b><span>Pendentes</span></div>
+            <div className="stat"><b>{sum.pendentes}</b><span>Não iniciadas</span></div>
             <div className="stat"><b>{sum.emAndamento}</b><span>Em andamento</span></div>
             <div className="stat"><b>{sum.concluidas}</b><span>Concluídas</span></div>
             <div className="stat"><b>{sum.atrasadas}</b><span>Atrasadas</span></div>
