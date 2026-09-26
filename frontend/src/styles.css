@@ -53,6 +53,10 @@ th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line
 .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #312e81, #4f46e5); padding: 16px; }
 .login-box { background: #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 380px; }
 .login-box h1 { margin: 0 0 4px; }
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 42px; }
+.pw-toggle { position: absolute; right: 4px; top: 4px; background: transparent; color: #0f172a; padding: 5px 9px; font-size: 15px; }
+.pw-toggle:hover { background: #f1f5f9; }
 .login-logo { max-height: 72px; max-width: 100%; object-fit: contain; display: block; margin-bottom: 10px; }
 .sidebar-logo { max-height: 56px; max-width: 100%; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px; }
 .timeline { border-left: 3px solid var(--line); margin-left: 6px; padding-left: 14px; display: flex; flex-direction: column; gap: 10px; }

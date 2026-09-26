@@ -52,6 +52,44 @@ app.put('/api/auth/password', authenticate, (req: AuthRequest, res) => {
   return res.json({ ok: true });
 });
 
+/* Solicitação pública de nova senha — o ADMIN autoriza no painel */
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { login } = req.body || {};
+  if (!login?.trim()) return res.status(400).json({ error: 'Informe seu login' });
+  const u = db.prepare('SELECT * FROM users WHERE login = ?').get(String(login).trim()) as any;
+  if (!u) return res.json({ ok: true, message: 'Se o login existir, uma solicitação foi registrada.' });
+  const open = db.prepare(`SELECT id FROM password_requests WHERE user_id = ? AND status = 'PENDENTE'`).get(u.id) as any;
+  if (!open) db.prepare(`INSERT INTO password_requests(user_id, login) VALUES (?, ?)`).run(u.id, u.login);
+  return res.json({ ok: true, message: 'Solicitação enviada. Aguarde o Administrador autorizar.' });
+});
+
+app.get('/api/password-requests', authenticate, requireAdmin, (_req, res) => {
+  const rows = db.prepare(`
+    SELECT pr.*, u.name AS user_name, h.name AS handled_by_name
+    FROM password_requests pr LEFT JOIN users u ON u.id = pr.user_id LEFT JOIN users h ON h.id = pr.handled_by
+    ORDER BY CASE pr.status WHEN 'PENDENTE' THEN 0 ELSE 1 END, pr.id DESC LIMIT 200
+  `).all();
+  return res.json({ requests: rows });
+});
+
+app.post('/api/password-requests/:id/approve', authenticate, requireAdmin, (req: AuthRequest, res) => {
+  const { newPassword } = req.body || {};
+  if (!newPassword || String(newPassword).length < 4) return res.status(400).json({ error: 'Nova senha deve ter ao menos 4 caracteres' });
+  const r = db.prepare('SELECT * FROM password_requests WHERE id = ?').get(req.params.id) as any;
+  if (!r) return res.status(404).json({ error: 'Solicitação não encontrada' });
+  if (r.status !== 'PENDENTE') return res.status(400).json({ error: 'Solicitação já tratada' });
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(bcrypt.hashSync(String(newPassword), 10), r.user_id);
+  db.prepare(`UPDATE password_requests SET status = 'APROVADO', handled_by = ?, handled_at = datetime('now') WHERE id = ?`).run(req.user!.id, r.id);
+  return res.json({ ok: true });
+});
+
+app.post('/api/password-requests/:id/reject', authenticate, requireAdmin, (req: AuthRequest, res) => {
+  const r = db.prepare('SELECT * FROM password_requests WHERE id = ?').get(req.params.id) as any;
+  if (!r) return res.status(404).json({ error: 'Solicitação não encontrada' });
+  db.prepare(`UPDATE password_requests SET status = 'REJEITADO', handled_by = ?, handled_at = datetime('now') WHERE id = ?`).run(req.user!.id, r.id);
+  return res.json({ ok: true });
+});
+
 /* ============ USERS (ADMIN cria/exclui/atribui; GESTOR lista gerenciados) ============ */
 
 app.get('/api/users', authenticate, (req: AuthRequest, res) => {
@@ -389,7 +427,7 @@ app.get('/api/settings', (_req, res) => {
   const rows = db.prepare('SELECT key, value FROM settings').all() as any[];
   const all = Object.fromEntries(rows.map(r => [r.key, r.value]));
   // Público: só dados de identidade visual
-  return res.json({ settings: { site_name: all.site_name || '', site_subtitle: all.site_subtitle || '', site_logo: all.site_logo || '' } });
+  return res.json({ settings: { site_name: all.site_name || '', site_subtitle: all.site_subtitle || '', site_logo: all.site_logo || '', site_header_mode: all.site_header_mode || 'logo-name-subtitle' } });
 });
 
 app.put('/api/settings', authenticate, requireAdmin, (req, res) => {

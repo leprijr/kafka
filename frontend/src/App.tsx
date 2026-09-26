@@ -12,11 +12,13 @@ import Profile from './pages/Profile';
 function Shell() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
-  const [logo, setLogo] = useState('');
+  const [brand, setBrand] = useState({ site_name: 'Kafka', site_subtitle: 'Sistema de Gestão de Processos', site_logo: '', site_header_mode: 'logo-name-subtitle' });
   useEffect(() => {
     fetch('/api/settings')
       .then(r => r.json())
-      .then(d => setLogo(d.settings?.site_logo || ''))
+      .then(d => {
+        if (d.settings) setBrand(s => ({ ...s, ...d.settings }));
+      })
       .catch(() => {});
   }, []);
   if (!user) return <Navigate to="/login" />;
@@ -27,9 +29,15 @@ function Shell() {
   return (
     <div className="layout">
       <aside className="sidebar">
-        {logo && <img src={logo} alt="Logotipo" className="sidebar-logo" />}
-        <h1>Kafka</h1>
-        <small>Sistema de Gestão de Processos</small>
+        {brand.site_header_mode !== 'none' && (
+          <>
+            {(brand.site_header_mode === 'logo-only' || brand.site_header_mode === 'logo-name' || brand.site_header_mode === 'logo-name-subtitle') && brand.site_logo && (
+              <img src={brand.site_logo} alt="Logotipo" className="sidebar-logo" />
+            )}
+            {(brand.site_header_mode === 'logo-name' || brand.site_header_mode === 'logo-name-subtitle') && <h1>{brand.site_name || 'Kafka'}</h1>}
+            {brand.site_header_mode === 'logo-name-subtitle' && <small>{brand.site_subtitle || ''}</small>}
+          </>
+        )}
         <nav>
           <NavLink to="/" end>Dashboard</NavLink>
           <NavLink to="/tarefas">Tarefas</NavLink>

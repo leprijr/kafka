@@ -70,6 +70,15 @@ export function migrate() {
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL DEFAULT ''
   );
+  CREATE TABLE IF NOT EXISTS password_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    login TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'PENDENTE' CHECK (status IN ('PENDENTE','APROVADO','REJEITADO')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    handled_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    handled_at TEXT
+  );
   CREATE INDEX IF NOT EXISTS idx_tasks_user ON tasks(user_id);
   CREATE INDEX IF NOT EXISTS idx_tasks_prazo ON tasks(data_prazo);
   CREATE INDEX IF NOT EXISTS idx_tram_task ON tramitacoes(task_id);
@@ -79,7 +88,8 @@ export function migrate() {
   const defaults: Record<string, string> = {
     site_name: 'Kafka — Sistema de Gestão de Processos',
     site_subtitle: 'To-Do List + Calendário + Tramitações',
-    site_logo: ''
+    site_logo: '',
+    site_header_mode: 'logo-name-subtitle'
   };
   const ins = db.prepare('INSERT OR IGNORE INTO settings(key, value) VALUES (?, ?)');
   for (const [k, v] of Object.entries(defaults)) ins.run(k, v);

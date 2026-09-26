@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { api } from '../api';
 import { useAuth } from '../auth';
+import PasswordInput from '../components/PasswordInput';
 
 export default function Profile() {
   const { user, refresh } = useAuth();
@@ -41,9 +42,9 @@ export default function Profile() {
         <h3>Alterar senha</h3>
         <form onSubmit={savePw}>
           <label>Senha atual</label>
-          <input type="password" value={pw.currentPassword} onChange={e => setPw({ ...pw, currentPassword: e.target.value })} />
+          <PasswordInput value={pw.currentPassword} onChange={e => setPw({ ...pw, currentPassword: e.target.value })} />
           <label>Nova senha</label>
-          <input type="password" value={pw.newPassword} onChange={e => setPw({ ...pw, newPassword: e.target.value })} />
+          <PasswordInput value={pw.newPassword} onChange={e => setPw({ ...pw, newPassword: e.target.value })} />
           <button style={{ marginTop: 8 }}>Alterar senha</button>
         </form>
       </div>
