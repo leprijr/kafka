@@ -34,6 +34,21 @@ export default function AdminUsers() {
 
   const gestores = users.filter(u => u.role === 'GESTOR');
 
+  const onLogoFile = (f: File | undefined) => {
+    if (!f) return;
+    if (!f.type.startsWith('image/')) {
+      alert('Escolha um arquivo de imagem.');
+      return;
+    }
+    if (f.size > 2 * 1024 * 1024) {
+      alert('Imagem muito grande. Use até 2 MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setSettings((s: any) => ({ ...s, site_logo: String(reader.result || '') }));
+    reader.readAsDataURL(f);
+  };
+
   return (
     <div>
       <h2>Painel Administrativo</h2>
@@ -97,6 +112,12 @@ export default function AdminUsers() {
         <input value={settings.site_name || ''} onChange={e => setSettings({ ...settings, site_name: e.target.value })} />
         <label>Subtítulo</label>
         <input value={settings.site_subtitle || ''} onChange={e => setSettings({ ...settings, site_subtitle: e.target.value })} />
+        <label>Logotipo (imagem — aparece no login e no menu lateral)</label>
+        {settings.site_logo && <div style={{ margin: '8px 0' }}><img src={settings.site_logo} alt="Logotipo atual" style={{ maxHeight: 80, maxWidth: 220, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 4 }} /></div>}
+        <div className="row">
+          <input type="file" accept="image/*" onChange={e => onLogoFile(e.target.files?.[0])} style={{ maxWidth: 320 }} />
+          {settings.site_logo && <button type="button" className="ghost" onClick={() => setSettings({ ...settings, site_logo: '' })}>Remover logo</button>}
+        </div>
         <button style={{ marginTop: 10 }} onClick={async () => { await api('/api/settings', { method: 'PUT', body: JSON.stringify(settings) }); alert('Salvo!'); }}>Salvar</button>
       </div>
     </div>

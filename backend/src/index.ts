@@ -14,7 +14,7 @@ seedAdmin();
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '5mb' }));
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -383,11 +383,13 @@ app.get('/api/tasks/calendar', authenticate, (req: AuthRequest, res) => {
   return res.json({ events: rows });
 });
 
-/* ============ SETTINGS (configurações gerais — só ADMIN edita) ============ */
+/* ============ SETTINGS (GET público p/ logo no login; PUT só ADMIN) ============ */
 
-app.get('/api/settings', authenticate, (_req, res) => {
+app.get('/api/settings', (_req, res) => {
   const rows = db.prepare('SELECT key, value FROM settings').all() as any[];
-  return res.json({ settings: Object.fromEntries(rows.map(r => [r.key, r.value])) });
+  const all = Object.fromEntries(rows.map(r => [r.key, r.value]));
+  // Público: só dados de identidade visual
+  return res.json({ settings: { site_name: all.site_name || '', site_subtitle: all.site_subtitle || '', site_logo: all.site_logo || '' } });
 });
 
 app.put('/api/settings', authenticate, requireAdmin, (req, res) => {

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './auth';
 import Login from './pages/Login';
@@ -11,6 +12,13 @@ import Profile from './pages/Profile';
 function Shell() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
+  const [logo, setLogo] = useState('');
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => setLogo(d.settings?.site_logo || ''))
+      .catch(() => {});
+  }, []);
   if (!user) return <Navigate to="/login" />;
   const out = () => {
     logout();
@@ -19,6 +27,7 @@ function Shell() {
   return (
     <div className="layout">
       <aside className="sidebar">
+        {logo && <img src={logo} alt="Logotipo" className="sidebar-logo" />}
         <h1>Kafka</h1>
         <small>Sistema de Gestão de Processos</small>
         <nav>

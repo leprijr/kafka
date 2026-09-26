@@ -78,7 +78,8 @@ export function migrate() {
   // Settings padrão
   const defaults: Record<string, string> = {
     site_name: 'Kafka — Sistema de Gestão de Processos',
-    site_subtitle: 'To-Do List + Calendário + Tramitações'
+    site_subtitle: 'To-Do List + Calendário + Tramitações',
+    site_logo: ''
   };
   const ins = db.prepare('INSERT OR IGNORE INTO settings(key, value) VALUES (?, ?)');
   for (const [k, v] of Object.entries(defaults)) ins.run(k, v);
