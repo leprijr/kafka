@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect x="8" y="8" width="496" height="496" rx="120" fill="#131a30"/>
+  <!-- haste vertical do K -->
+  <line x1="172" y1="132" x2="172" y2="388" stroke="#45c0f5" stroke-width="46" stroke-linecap="round"/>
+  <circle cx="172" cy="132" r="43" fill="#45c0f5"/>
+  <circle cx="172" cy="388" r="43" fill="#45c0f5"/>
+  <!-- diagonal branca (meio -> topo direito) -->
+  <line x1="172" y1="300" x2="388" y2="142" stroke="#ffffff" stroke-width="46" stroke-linecap="round"/>
+  <circle cx="388" cy="142" r="43" fill="#ffffff"/>
+  <!-- diagonal azul (centro -> base direita) -->
+  <line x1="238" y1="238" x2="362" y2="388" stroke="#45c0f5" stroke-width="46" stroke-linecap="round"/>
+  <circle cx="362" cy="388" r="43" fill="#45c0f5"/>
+</svg>
