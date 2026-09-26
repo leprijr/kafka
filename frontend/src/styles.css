@@ -21,7 +21,7 @@ a { color: var(--primary); text-decoration: none; }
 .sidebar nav { display: flex; flex-direction: column; gap: 4px; margin-top: 14px; }
 .sidebar nav a { padding: 9px 12px; border-radius: 8px; color: #e2e8f0; }
 .sidebar nav a.active, .sidebar nav a:hover { background: #334155; }
-.sidebar .who { margin-top: auto; font-size: 13px; color: #cbd5e1; }
+.sidebar .who { margin-top: 14px; font-size: 13px; color: #cbd5e1; }
 .sidebar button { margin-top: 8px; }
 .main { flex: 1; padding: 24px; max-width: 1200px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
